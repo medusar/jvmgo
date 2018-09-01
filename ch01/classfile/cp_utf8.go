@@ -3,6 +3,11 @@ package classfile
 //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.4.7
 //规范里，CONSTANT_Utf8_Info是一个字节数组加字节数组长度
 //这里定义直接使用了string,长度加字节数组在readInfo方法中可以体现
+// CONSTANT_Utf8_info {
+//     u1 tag;
+//     u2 length;
+//     u1 bytes[length];
+// }
 type ConstantUtf8Info struct {
 	str string
 }

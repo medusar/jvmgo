@@ -40,6 +40,7 @@ type ConstantInfo interface {
 func readConstantInfo(r *ClassReader, cp ConstantPool) ConstantInfo {
 	//读取tag的值
 	tag := r.readUint8()
+	log.Printf("tag:%v\n", tag)
 	//根据不同的tag值，创建具体的常量
 	c := newConstantInfo(tag, cp)
 	//TODO:fixme
@@ -48,6 +49,7 @@ func readConstantInfo(r *ClassReader, cp ConstantPool) ConstantInfo {
 	}
 	//读取完善常量信息
 	c.readInfo(r)
+
 	return c
 }
 
@@ -64,27 +66,24 @@ func newConstantInfo(tag uint8, cp ConstantPool) ConstantInfo {
 	case CONSTANT_Utf8:
 		return &ConstantUtf8Info{}
 	case CONSTANT_String:
-		return &ConstantStringInfo{}
+		return &ConstantStringInfo{cp: cp}
 	case CONSTANT_Class:
-		return &ConstantClassInfo{}
+		return &ConstantClassInfo{cp: cp}
 	case CONSTANT_NameAndType:
-		return &ConstantNameAndTypeInfo{}
+		return &ConstantNameAndTypeInfo{cp: cp}
 	case CONSTANT_Fieldref:
-		return &ConstantFieldRefInfo{}
+		return &ConstantFieldRefInfo{ConstantRefInfo{cp: cp}}
 	case CONSTANT_Methodref:
-		return &ConstantMethodRefInfo{}
+		return &ConstantMethodRefInfo{ConstantRefInfo{cp: cp}}
 	case CONSTANT_InterfaceMethodref:
-		return &ConstantInterfaceMethodRefInfo{}
+		return &ConstantInterfaceMethodRefInfo{ConstantRefInfo{cp: cp}}
 	case CONSTANT_MethodHandle:
-		return nil
+		return &ConstantMethodHandleInfo{cp: cp}
 	case CONSTANT_MethodType:
-		return nil
+		return &ConstantMethodTypeInfo{cp: cp}
 	case CONSTANT_InvokeDynamic:
-		//TODO
-		return nil
+		return &ConstantInvokeDynamicInfo{cp: cp}
 	default:
-
-		log.Printf("tag:%v\n", tag)
-		panic("java.lang.ClassFormatError:constant pool tag:" + string(tag))
+		panic("java.lang.ClassFormatError:constant pool tag!")
 	}
 }

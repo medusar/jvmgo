@@ -5,6 +5,16 @@ import (
 )
 
 //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.4.4
+
+// CONSTANT_Integer_info {
+//     u1 tag;
+//     u4 bytes;
+// }
+
+// CONSTANT_Float_info {
+//     u1 tag;
+//     u4 bytes;
+// }
 type ConstantIntegerInfo struct {
 	val int32
 }
