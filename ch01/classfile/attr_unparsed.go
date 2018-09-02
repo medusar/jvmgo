@@ -1,5 +1,7 @@
 package classfile
 
+//通用的Attribute，对于一些比较复杂或者需要调试还没有来得及实现的Attribute
+//用该Attribute可以跳过对应字节，从而不影响测试
 //attribute_info {
 // u2 attribute_name_index;
 // u4 attribute_length;
