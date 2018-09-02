@@ -79,25 +79,45 @@ ACC_SYNTHETIC	0x1000	Declared synthetic; not present in the source code.
 ACC_ANNOTATION	0x2000	Declared as an annotation type.
 ACC_ENUM	0x4000
 */
-//TODO:不同类型的accessFlags不同
 func toStringAccessFlags(flags uint16) string {
 	names := make([]string, 1)
-	if 0x0001&flags == 0x0001 {
+	if flags&0x0001 == 0x0001 {
 		names = append(names, "ACC_PUBLIC")
 	}
-	if 0x0010&flags == 0x0010 {
+	if flags&0x0002 == 0x0002 {
+		names = append(names, "ACC_PRIVATE")
+	}
+	if flags&0x0004 == 0x0004 {
+		names = append(names, "ACC_PROTECTED")
+	}
+	if flags&0x0008 == 0x0008 {
+		names = append(names, "ACC_STATIC")
+	}
+	if flags&0x0010 == 0x0010 {
 		names = append(names, "ACC_FINAL")
 	}
-	if 0x0020&flags == 0x0020 {
-		names = append(names, "ACC_SUPER")
+	if flags&0x0020 == 0x0020 {
+		names = append(names, "ACC_SYNCHRONIZED")
+	}
+	if flags&0x0040 == 0x0040 {
+		names = append(names, "ACC_BRIDGE")
+	}
+	if flags&0x0080 == 0x0080 {
+		names = append(names, "ACC_VARARGS")
+	}
+	if flags&0x0080 == 0x0100 {
+		names = append(names, "ACC_NATIVE")
 	}
 	if 0x0200&flags == 0x0200 {
 		names = append(names, "ACC_INTERFACE")
 	}
-	if 0x0400&flags == 0x0400 {
+	if flags&0x0080 == 0x0400 {
 		names = append(names, "ACC_ABSTRACT")
 	}
-	if 0x1000&flags == 0x1000 {
+	if flags&0x0080 == 0x0800 {
+		names = append(names, "ACC_STRICT")
+	}
+	if flags&0x1000 == 0x1000 {
 		names = append(names, "ACC_SYNTHETIC")
 	}
 	if 0x2000&flags == 0x2000 {
@@ -161,11 +181,11 @@ func (c *ClassFile) String() string {
 	fmt.Fprintf(s, "interfaces: %v\n", c.interfaces)
 	fmt.Fprintf(s, "fields count: %v\n", len(c.fields))
 	for _, f := range c.fields {
-		fmt.Fprintf(s, "  %s\n", f.Name())
+		fmt.Fprintf(s, "  %s\n", f.String())
 	}
 	fmt.Fprintf(s, "methods count: %v\n", len(c.methods))
 	for _, m := range c.methods {
-		fmt.Fprintf(s, "  %s\n", m.Name())
+		fmt.Fprintf(s, "  %s\n", m.String())
 	}
 	return s.String()
 }

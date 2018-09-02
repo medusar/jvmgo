@@ -85,11 +85,15 @@ func (m *MemberInfo) Descriptor() string {
 	return m.cp.getUtf8(m.descriptorIndex)
 }
 
+func (m *MemberInfo) AccessFlagNames() string {
+	return strconv.Itoa(int(m.accessFlags))
+}
+
 func (m *MemberInfo) String() string {
 	s := &strings.Builder{}
-	fmt.Fprintf(s, " name:%s\n", m.Name())
-	fmt.Fprintf(s, " flags:%s\n", toStringAccessFlags(m.accessFlags))
-	fmt.Fprintf(s, " descriptor:%s\n", m.Descriptor())
+	fmt.Fprintf(s, "name:%s\n", m.Name())
+	fmt.Fprintf(s, "flags:%s\n", toStringAccessFlags(m.accessFlags))
+	fmt.Fprintf(s, "descriptor:%s\n", m.Descriptor())
 	if len(m.attributes) > 0 {
 		for _, attr := range m.attributes {
 			fmt.Fprintf(s, "  %s\n", attr)

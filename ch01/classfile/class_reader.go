@@ -4,10 +4,16 @@ import (
 	"encoding/binary"
 )
 
+/*
+与jvm规范中对应关系
+u1 --> byte/uint8
+u2 --> uint16
+u4 --> uint32
+*/
 //用于读取class文件字节
 type ClassReader struct {
 	data  []byte
-	index int
+	index int //用于调试
 }
 
 func (c *ClassReader) readUint8() uint8 {
