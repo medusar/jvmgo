@@ -5,3 +5,7 @@ simple jvm written in go, based on a tutorial, for learning go only!
 2. All the codes in this project is coded by myself, based on the instructions and demos, with little change anyway, mainly for practice.
 
 3. JVM Specification: [Java7](https://docs.oracle.com/javase/specs/jls/se7/html/index.html)
+
+# TODO list
+- [ ] read class file and display detailed information.
+- [ ] refactor code, more encapsulated.
