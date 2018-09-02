@@ -68,7 +68,7 @@ func (c *CodeAttribute) String() string {
 	fmt.Fprintf(s, "Code:\n")
 	fmt.Fprintf(s, "    stack=%d, locals=%d, args_size=%d\n", c.maxStack, c.maxLocals, len(c.code)+len(c.exceptionTable))
 	for _, attr := range c.attributes {
-		fmt.Fprintf(s, "  %s", attr.String())
+		fmt.Fprintf(s, "  %s\n", attr.String())
 	}
 	return s.String()
 }

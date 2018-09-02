@@ -14,3 +14,7 @@ type UnparsedAttribute struct {
 func (a *UnparsedAttribute) readInfo(r *ClassReader) {
 	a.info = r.readBytes(a.length)
 }
+
+func (a *UnparsedAttribute) String() string {
+	return "attribute type: " + a.name + " unparsed yet"
+}

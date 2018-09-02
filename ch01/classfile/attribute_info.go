@@ -93,7 +93,7 @@ func newAttributeInfo(name string, length uint32, cp ConstantPool) AttributeInfo
 	log.Println("attribute name:" + name)
 	switch name {
 	case "BootstrapMethods":
-		return nil
+		return &UnparsedAttribute{name: name, length: length}
 	case "Code":
 		return &CodeAttribute{cp: cp}
 	case "ConstantValue":
@@ -101,30 +101,40 @@ func newAttributeInfo(name string, length uint32, cp ConstantPool) AttributeInfo
 	case "Deprecated":
 		return &DeprecatedAttribute{}
 	case "EnclosingMethod":
-		return nil
+		return &UnparsedAttribute{name: name, length: length}
 	case "Exceptions":
 		return &ExceptionsAttribute{cp: cp}
 	case "InnerClasses":
-		return nil
+		return &UnparsedAttribute{name: name, length: length}
 	case "LineNumberTable":
 		return &LineNumberTableAttribute{}
 	case "LocalVariableTable":
 		return &LocalVariableTableAttribute{}
 	case "LocalVariableTypeTable":
-		return nil
-	// case "MethodParameters":
-	// case "RuntimeInvisibleAnnotations":
-	// case "RuntimeInvisibleParameterAnnotations":
-	// case "RuntimeInvisibleTypeAnnotations":
-	// case "RuntimeVisibleAnnotations":
-	// case "RuntimeVisibleParameterAnnotations":
-	// case "RuntimeVisibleTypeAnnotations":
+		return &UnparsedAttribute{name: name, length: length}
+	case "MethodParameters":
+		return &UnparsedAttribute{name: name, length: length}
+	case "RuntimeInvisibleAnnotations":
+		return &UnparsedAttribute{name: name, length: length}
+	case "RuntimeInvisibleParameterAnnotations":
+		return &UnparsedAttribute{name: name, length: length}
+	case "RuntimeInvisibleTypeAnnotations":
+		return &UnparsedAttribute{name: name, length: length}
+	case "RuntimeVisibleAnnotations":
+		return &UnparsedAttribute{name: name, length: length}
+	case "RuntimeVisibleParameterAnnotations":
+		return &UnparsedAttribute{name: name, length: length}
+	case "RuntimeVisibleTypeAnnotations":
+		return &UnparsedAttribute{name: name, length: length}
 	case "Signature":
-		return nil
+		return &SignatureAttribute{cp: cp}
 	case "SourceFile":
 		return &SourceFileAttribute{cp: cp}
-	// case "SourceDebugExtension":
-	// case "StackMapTable":
+	case "SourceDebugExtension":
+		return &UnparsedAttribute{name: name, length: length}
+	case "StackMapTable":
+		// return &StackMapTableAttribute{}
+		return &UnparsedAttribute{name: name, length: length}
 	case "Synthetic":
 		return &SyntheticAttribute{}
 	default:

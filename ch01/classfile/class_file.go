@@ -79,6 +79,7 @@ ACC_SYNTHETIC	0x1000	Declared synthetic; not present in the source code.
 ACC_ANNOTATION	0x2000	Declared as an annotation type.
 ACC_ENUM	0x4000
 */
+//TODO:不同类型的accessFlags不同
 func toStringAccessFlags(flags uint16) string {
 	names := make([]string, 1)
 	if 0x0001&flags == 0x0001 {
@@ -105,7 +106,7 @@ func toStringAccessFlags(flags uint16) string {
 	if 0x4000&flags == 0x4000 {
 		names = append(names, "ACC_ENUM")
 	}
-	return strings.Join(names, "  ")
+	return strings.Join(names, ", ")
 }
 
 // getters
