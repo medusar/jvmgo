@@ -1,5 +1,10 @@
 package classfile
 
+import (
+	"fmt"
+	"strings"
+)
+
 //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.7.12
 // LineNumberTable_attribute {
 //     u2 attribute_name_index;
@@ -27,4 +32,13 @@ func (l *LineNumberTableAttribute) readInfo(r *ClassReader) {
 			lineNumber: r.readUint16(),
 		}
 	}
+}
+
+func (l *LineNumberTableAttribute) String() string {
+	s := &strings.Builder{}
+	fmt.Fprintf(s, "LineNumberTable:\n")
+	for _, entry := range l.lineNumberTable {
+		fmt.Fprintf(s, "  line %d:%d", entry.lineNumber, entry.startPc)
+	}
+	return s.String()
 }

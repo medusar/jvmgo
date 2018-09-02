@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"jvmgo/ch01/classfile"
@@ -62,11 +63,12 @@ func loadClass(className string, cp *classpath.Classpath) *classfile.ClassFile {
 	}
 
 	log.Println("=============================")
-	log.Printf("%v", classData)
+	fmt.Printf("%s", hex.Dump(classData))
 	log.Println("=============================")
 
 	cf, err := classfile.Parse(classData)
 	if err != nil {
+		fmt.Printf("error: %+v", err)
 		panic(err)
 	}
 

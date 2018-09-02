@@ -2,6 +2,7 @@ package classfile
 
 import (
 	"log"
+	"strconv"
 )
 
 //常量池
@@ -40,16 +41,11 @@ type ConstantInfo interface {
 func readConstantInfo(r *ClassReader, cp ConstantPool) ConstantInfo {
 	//读取tag的值
 	tag := r.readUint8()
-	log.Printf("tag:%v\n", tag)
+	log.Printf("tag:%+v\n", tag)
 	//根据不同的tag值，创建具体的常量
 	c := newConstantInfo(tag, cp)
-	//TODO:fixme
-	if c == nil {
-		return nil
-	}
 	//读取完善常量信息
 	c.readInfo(r)
-
 	return c
 }
 
@@ -84,6 +80,8 @@ func newConstantInfo(tag uint8, cp ConstantPool) ConstantInfo {
 	case CONSTANT_InvokeDynamic:
 		return &ConstantInvokeDynamicInfo{cp: cp}
 	default:
+		log.Println("illegal constant pool tag:" + strconv.Itoa(int(tag)))
+		// return nil
 		panic("java.lang.ClassFormatError:constant pool tag!")
 	}
 }

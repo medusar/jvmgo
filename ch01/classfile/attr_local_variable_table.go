@@ -36,3 +36,7 @@ func (l *LocalVariableTableAttribute) readInfo(r *ClassReader) {
 		}
 	}
 }
+
+func (l *LocalVariableTableAttribute) String() string {
+	return "TODO"
+}

@@ -1,5 +1,13 @@
 package classfile
 
+import (
+	"fmt"
+	"log"
+	"reflect"
+	"strconv"
+	"strings"
+)
+
 //常量池，其实就是常量信息表，这里用数组表示
 //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.4
 type ConstantPool []ConstantInfo
@@ -8,9 +16,18 @@ type ConstantPool []ConstantInfo
 //u2             constant_pool_count;
 // cp_info        constant_pool[constant_pool_count-1];
 func readConstantPool(r *ClassReader) ConstantPool {
-	count := r.readUint16()
+	//constant_pool_count
+	// The value of the constant_pool_count item is equal to the number of entries
+	// in the constant_pool table plus one.
+	//A constant_pool index is considered valid if it is greater than zero
+	//and less than constant_pool_count,
+	//with the exception for constants of type long and double noted in §4.4.5.
+	count := int(r.readUint16())
+	log.Println("constant info size:" + strconv.Itoa(count))
 	cp := make([]ConstantInfo, count)
-	for i := range cp {
+	// The constant_pool table is indexed from 1 to constant_pool_count - 1.
+	for i := 1; i < count; i++ {
+		log.Println("constant info index:" + strconv.Itoa(i))
 		cp[i] = readConstantInfo(r, cp)
 		//https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.4.5
 		//The CONSTANT_Long_info and CONSTANT_Double_info represent 8-byte numeric (long and double) constants
@@ -40,6 +57,7 @@ func (c ConstantPool) getClassName(index uint16) string {
 
 //按索引查找常量
 func (c ConstantPool) getConstantInfo(index uint16) ConstantInfo {
+	log.Println("cp pool size:" + strconv.Itoa(len(c)) + ", index:" + strconv.Itoa(int(index)))
 	if cpInfo := c[index]; cpInfo != nil {
 		return cpInfo
 	}
@@ -53,4 +71,12 @@ func (c ConstantPool) getNameAndType(index uint16) (string, string) {
 	name := c.getUtf8(nameAndTypeInfo.nameIndex)
 	_type := c.getUtf8(nameAndTypeInfo.descriptorIndex)
 	return name, _type
+}
+
+func (c ConstantPool) String() string {
+	s := &strings.Builder{}
+	for i, cpInfo := range c {
+		fmt.Fprintf(s, "ConstantPool[%d]: %v\n", i, reflect.TypeOf(cpInfo))
+	}
+	return s.String()
 }

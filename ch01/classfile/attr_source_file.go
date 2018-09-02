@@ -16,3 +16,7 @@ func (s *SourceFileAttribute) readInfo(r *ClassReader) {
 func (s *SourceFileAttribute) FileName() string {
 	return s.cp.getUtf8(s.sourceFileIndex)
 }
+
+func (s *SourceFileAttribute) String() string {
+	return "TODO"
+}

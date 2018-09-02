@@ -1,20 +1,44 @@
 package classfile
 
+import (
+	"log"
+	"strconv"
+)
+
 //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.5
 //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.7
 //Attribute也有很多种不同的实现，每种实现是通过attribute_name_index来区分
 // ClassFile中Attribute的定义
 // u2             attributes_count;
 // attribute_info attributes[attributes_count];
+//Field中Attribute定义
+/*
+field_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}*/
+/*method_info {
+    u2             access_flags;
+    u2             name_index;
+    u2             descriptor_index;
+    u2             attributes_count;
+    attribute_info attributes[attributes_count];
+}*/
 type AttributeInfo interface {
 	readInfo(r *ClassReader)
+	String() string
 }
 
 //读取ClassFile中的所有Attribute
 func readAttributes(r *ClassReader, cp ConstantPool) []AttributeInfo {
-	count := r.readUint16()
+	count := int(r.readUint16())
+	log.Println("attribute count:" + strconv.Itoa(count))
 	attrs := make([]AttributeInfo, count)
 	for i := range attrs {
+		log.Println("attribute index:" + strconv.Itoa(i))
 		attrs[i] = readAttribute(r, cp)
 	}
 	return attrs
@@ -27,9 +51,12 @@ func readAttributes(r *ClassReader, cp ConstantPool) []AttributeInfo {
 // }
 func readAttribute(r *ClassReader, cp ConstantPool) AttributeInfo {
 	nameIndex := r.readUint16()
-	attrName := cp.getUtf8(nameIndex)
 	attrLengh := r.readUint32()
-	return newAttributeInfo(attrName, attrLengh, cp)
+	log.Println("attr name index:" + strconv.Itoa(int(nameIndex)))
+	attrName := cp.getUtf8(nameIndex)
+	attr := newAttributeInfo(attrName, attrLengh, cp)
+	attr.readInfo(r)
+	return attr
 }
 
 //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.7
@@ -63,12 +90,44 @@ func readAttribute(r *ClassReader, cp ConstantPool) AttributeInfo {
 // AnnotationDefault	§4.7.20	5.0	49.0
 // BootstrapMethods	§4.7.21	7	51.0
 func newAttributeInfo(name string, length uint32, cp ConstantPool) AttributeInfo {
+	log.Println("attribute name:" + name)
 	switch name {
+	case "BootstrapMethods":
+		return nil
 	case "Code":
-		return nil
+		return &CodeAttribute{cp: cp}
 	case "ConstantValue":
+		return &ConstantValueAttribute{}
+	case "Deprecated":
+		return &DeprecatedAttribute{}
+	case "EnclosingMethod":
 		return nil
+	case "Exceptions":
+		return &ExceptionsAttribute{cp: cp}
+	case "InnerClasses":
+		return nil
+	case "LineNumberTable":
+		return &LineNumberTableAttribute{}
+	case "LocalVariableTable":
+		return &LocalVariableTableAttribute{}
+	case "LocalVariableTypeTable":
+		return nil
+	// case "MethodParameters":
+	// case "RuntimeInvisibleAnnotations":
+	// case "RuntimeInvisibleParameterAnnotations":
+	// case "RuntimeInvisibleTypeAnnotations":
+	// case "RuntimeVisibleAnnotations":
+	// case "RuntimeVisibleParameterAnnotations":
+	// case "RuntimeVisibleTypeAnnotations":
+	case "Signature":
+		return nil
+	case "SourceFile":
+		return &SourceFileAttribute{cp: cp}
+	// case "SourceDebugExtension":
+	// case "StackMapTable":
+	case "Synthetic":
+		return &SyntheticAttribute{}
 	default:
-		return nil
+		return nil // undefined attr
 	}
 }

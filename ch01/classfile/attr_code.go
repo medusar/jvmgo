@@ -1,5 +1,12 @@
 package classfile
 
+import (
+	"fmt"
+	"log"
+	"strconv"
+	"strings"
+)
+
 //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.7.3
 // Code_attribute {
 //     u2 attribute_name_index;
@@ -34,13 +41,14 @@ type ExceptionTableEntry struct {
 }
 
 func (c *CodeAttribute) readInfo(r *ClassReader) {
+	log.Println("Code begin, readerIndex:" + strconv.Itoa(r.Index()))
 	c.maxStack = r.readUint16()
 	c.maxLocals = r.readUint16()
 
 	codeLength := r.readUint32()
 	c.code = r.readBytes(codeLength)
 
-	exceptionTableCount := r.readUint32()
+	exceptionTableCount := r.readUint16()
 	c.exceptionTable = make([]*ExceptionTableEntry, exceptionTableCount)
 	for i := range c.exceptionTable {
 		c.exceptionTable[i] = &ExceptionTableEntry{
@@ -50,10 +58,17 @@ func (c *CodeAttribute) readInfo(r *ClassReader) {
 			catchType: r.readUint16(),
 		}
 	}
+	c.attributes = readAttributes(r, c.cp)
 
-	attributeCount := r.readUint16()
-	c.attributes = make([]AttributeInfo, attributeCount)
-	for i := range c.attributes {
-		c.attributes[i] = readAttribute(r, c.cp)
+	log.Println("Code end, readerIndex:" + strconv.Itoa(r.Index()))
+}
+
+func (c *CodeAttribute) String() string {
+	s := &strings.Builder{}
+	fmt.Fprintf(s, "Code:\n")
+	fmt.Fprintf(s, "    stack=%d, locals=%d, args_size=%d\n", c.maxStack, c.maxLocals, len(c.code)+len(c.exceptionTable))
+	for _, attr := range c.attributes {
+		fmt.Fprintf(s, "  %s", attr.String())
 	}
+	return s.String()
 }

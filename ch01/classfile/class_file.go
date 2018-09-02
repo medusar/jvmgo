@@ -2,11 +2,14 @@ package classfile
 
 import (
 	"fmt"
+	"log"
+	"strconv"
 	"strings"
 )
 
-// java类文件结构
-// https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html
+/* java类文件结构
+https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html
+*/
 type ClassFile struct {
 	magic        uint32
 	minorVersion uint16
@@ -28,12 +31,13 @@ func Parse(classData []byte) (cf *ClassFile, err error) {
 			var ok bool
 			err, ok = r.(error)
 			if !ok {
+				log.Fatal(err)
 				err = fmt.Errorf("%v", r)
 			}
 		}
 	}()
 
-	cr := &ClassReader{classData}
+	cr := &ClassReader{data: classData, index: 0}
 	cf = &ClassFile{}
 	cf.read(cr)
 	return
@@ -42,15 +46,66 @@ func Parse(classData []byte) (cf *ClassFile, err error) {
 //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html
 func (c *ClassFile) read(reader *ClassReader) {
 	c.readAndCheckMagic(reader)
+	log.Println("magic number:" + strconv.Itoa(int(c.magic)))
 	c.readAndCheckVersion(reader)
+	log.Println("minor version:" + strconv.Itoa(int(c.minorVersion)))
+	log.Println("major version:" + strconv.Itoa(int(c.majorVersion)))
 	c.constantPool = readConstantPool(reader)
+	log.Println("constant pool finished")
+	log.Println(c.constantPool)
 	c.accessFlags = reader.readUint16()
+	log.Println("access flag finished:" + toStringAccessFlags(c.accessFlags))
 	c.thisClass = reader.readUint16()
+	log.Println("this class finished")
 	c.superClass = reader.readUint16()
+	log.Println("super class finished")
 	c.interfaces = reader.readUint16s()
+	log.Println("interfaces finished")
 	c.fields = readMembers(reader, c.constantPool)
+	log.Println("fields finished")
 	c.methods = readMembers(reader, c.constantPool)
+	log.Println("methods finished")
 	c.attributes = readAttributes(reader, c.constantPool)
+	log.Println("attributes finished")
+}
+
+/*
+ACC_PUBLIC	0x0001	Declared public; may be accessed from outside its package.
+ACC_FINAL	0x0010	Declared final; no subclasses allowed.
+ACC_SUPER	0x0020	Treat superclass methods specially when invoked by the invokespecial instruction.
+ACC_INTERFACE	0x0200	Is an interface, not a class.
+ACC_ABSTRACT	0x0400	Declared abstract; must not be instantiated.
+ACC_SYNTHETIC	0x1000	Declared synthetic; not present in the source code.
+ACC_ANNOTATION	0x2000	Declared as an annotation type.
+ACC_ENUM	0x4000
+*/
+func toStringAccessFlags(flags uint16) string {
+	names := make([]string, 1)
+	if 0x0001&flags == 0x0001 {
+		names = append(names, "ACC_PUBLIC")
+	}
+	if 0x0010&flags == 0x0010 {
+		names = append(names, "ACC_FINAL")
+	}
+	if 0x0020&flags == 0x0020 {
+		names = append(names, "ACC_SUPER")
+	}
+	if 0x0200&flags == 0x0200 {
+		names = append(names, "ACC_INTERFACE")
+	}
+	if 0x0400&flags == 0x0400 {
+		names = append(names, "ACC_ABSTRACT")
+	}
+	if 0x1000&flags == 0x1000 {
+		names = append(names, "ACC_SYNTHETIC")
+	}
+	if 0x2000&flags == 0x2000 {
+		names = append(names, "ACC_ANNOTATION")
+	}
+	if 0x4000&flags == 0x4000 {
+		names = append(names, "ACC_ENUM")
+	}
+	return strings.Join(names, "  ")
 }
 
 // getters
