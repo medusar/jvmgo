@@ -6,6 +6,11 @@ simple jvm written in go, based on a tutorial, for learning go only!
 
 3. JVM Specification: [Java7](https://docs.oracle.com/javase/specs/jls/se7/html/index.html)
 
+# How to run?
+1. `go install jvmgo/ch01`, you should make sure codes could be found in $GOPATH or $GOROOT.
+2. goto directory $GOPATH/bin
+3. `./ch01 {parameters}`
+
 # TODO list
 - [ ] read class file and display detailed information.
 - [ ] refactor code, more encapsulated.
